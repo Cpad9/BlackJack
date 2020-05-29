@@ -53,6 +53,7 @@ class Player:
         total = 0
         for card in self.hand:
             total += card.val
+        print(total)
         return total
     
 class Game:
@@ -66,17 +67,30 @@ class Game:
         print('Starting game...\nDeck is being shuffled')
         self.deck.shuffle()
         self.dealCards()
-        self.showDealerHand()
-        self.showPlayerHand()
-        self.askHitOrStay()
+        handOnGoing = True
+        while handOnGoing:
+            self.showDealerHand()
+            self.showPlayerHand()
+            self.askHitOrStay()
+            self.dealerChoice()
+    
+    def dealerChoice(self):
+        if self.dealer.handTotal() < 17:
+            self.dealer.draw(self.deck)
+            if self.dealer.handTotal() > 21:
+                handOnGoing = False
+        else:
+            print(f'Dealer stays, Hand total:{self.dealer.handTotal()}')
     
     def askHitOrStay(self):
         if input('Hit(1) or Stay(2)?') == '1':
+            print(self.player.handTotal())
             self.player.draw(self.deck)
             self.player.showHand()
             #If a Bust (Over 21)
             if self.player.handTotal() > 21:
                 print('Bust!')
+                handOnGoing = False
             if self.player.handTotal() <21:
                 print('Yoooooo you didnt bust! Thats whats up!')
         else:
@@ -108,6 +122,7 @@ class Game:
 chris = Player('Chris')
 
 game = Game(chris)
+print(chris.handTotal())
 # game.showDealerHand()
 # game.showPlayerHand()
 
