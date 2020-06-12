@@ -78,25 +78,31 @@ class Game:
         #Show Each Hand
         self.showDealerHand()
         self.showPlayerHand()
-        #handOnGoing
+
+        #set handOnGoing, stay
         self.handOnGoing = True
         self.player.stay = False
         self.dealer.stay = False
+        
+        #Hand Loop
         while self.handOnGoing is True:
+            #Player's Call
             if self.player.stay is False:
-                #Ask to Hit or Stay... Show hand, Check hand if > 21
                 self.playerChoice()
                 self.checkPlayer()
             time.sleep(1)
+            #Dealer's Call
             if self.dealer.stay is False and self.handOnGoing is True:
                 self.dealerChoice()
                 self.checkDealer()
+            #Check if both 'stayed'
             if self.player.stay is True and self.dealer.stay is True:
                 self.handOnGoing = False
+        #Once while loop is complete, Check Outcome.
         if self.handOnGoing is False:
             self.checkOutcome()
 
-
+    #Determine win/loss/draw
     def checkOutcome(self):
         print(f'\n\nComparing Hand Totals...\nDealer hand total:{self.dealer.handTotal()}\nPlayer hand total:{self.player.handTotal()}')
             #IF PLAYER WINS
@@ -116,9 +122,10 @@ class Game:
             print('You tied, Dealer wins.')
         else:
             print("checkOutcome() 'else' statement")
-
-
+    
+    #Ask player Hit or Stay
     def playerChoice(self):
+        time.sleep(.2)
         hitStay = input(f'Total: {self.player.handTotal()}... (H)it or (S)tay?')
         if hitStay.lower() == 'h':
             self.player.draw(self.deck)
@@ -129,7 +136,8 @@ class Game:
         else:
             print('Incorrect Input, Please type "H" or "S" ')
             self.playerChoice()
-    
+
+    #Checks if player busts
     def checkPlayer(self):
         if self.player.handTotal() > 21:
             print('BUST!')
@@ -138,16 +146,23 @@ class Game:
             self.showPlayerHand()
             pass
 
-
+    #Show Player hand (All Cards)
+    def showPlayerHand(self):
+        print(f"{self.player.name}'s Hand")
+        self.player.showHand()
+        print(f"Player Hand Total: {self.player.handTotal()}\n")
+    
+    #Dealer Hit or Stay
     def dealerChoice(self):
+        time.sleep(.2)
         if self.dealer.handTotal() < 17:
             print('Dealer Draws')
             self.dealer.draw(self.deck)
         else:
             print(f'Dealer stays...')
             self.dealer.stay = True
-        
 
+    #Check if Dealer Busted
     def checkDealer(self):
         if self.dealer.handTotal() > 21:
             print('BUST!')
@@ -155,7 +170,7 @@ class Game:
         else:
             self.showDealerHand()
             
-    
+    #Shows dealer hand (Not first card)
     def showDealerHand(self):
         print("Dealer's Hand")
         #Doesn't Show First Card [X][6][1]
@@ -164,12 +179,7 @@ class Game:
             self.dealer.hand[i].show()
         print("\n")
     
-    def showPlayerHand(self):
-        print(f"{self.player.name}'s Hand")
-        self.player.showHand()
-        print(f"Player Hand Total: {self.player.handTotal()}\n")
-
-
+    
 
 chris = Player('Chris')
 
