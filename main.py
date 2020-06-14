@@ -4,6 +4,8 @@
 import random
 import time
 
+
+#### Classes: Card, Deck, Player, Game
 class Card:
     def __init__(self, suit, val):
         self.suit = suit
@@ -67,33 +69,52 @@ class Game:
         self.startGame()
     
     def startGame(self):
-        print('Starting game...\nDeck is being shuffled')
-        self.deck.shuffle()
-        #Deal Cards
-        print('Dealing Cards\n')
-        self.player.draw(self.deck)
-        self.dealer.draw(self.deck)
-        self.player.draw(self.deck)
-        self.dealer.draw(self.deck)
-        #Show Each Hand
-        self.showDealerHand()
-        self.showPlayerHand()
-        #handOnGoing
-        self.handOnGoing = True
+        
+        #Game Ongoing
+        self.gameOngoing = True
+
+        while self.gameOngoing is True:
+            print('Starting game...\nDeck is being shuffled')
+            self.deck.shuffle()
+            #Deal Cards
+            print('Dealing Cards\n')
+            self.player.draw(self.deck)
+            self.dealer.draw(self.deck)
+            self.player.draw(self.deck)
+            self.dealer.draw(self.deck)
+            #Show Each Hand
+            self.showDealerHand()
+            self.showPlayerHand()
+
+            self.playHand()
+
+            userIn = input("Would you like to play again? (Y)es or (N)o\n")
+
+            ## TODO ##
+            #### WORK ON RESETING CARDS IN HAND
+            if userIn.lower() == 'Y':
+                self.gameOngoing = True
+                self.player.deck.hand.clear()
+                self.dealer.hand.deck.clear()
+            elif userIn.lower() == 'N':
+                self.gameOngoing = False
+
+    def playHand(self):
+        self.handOngoing = True
         self.player.stay = False
         self.dealer.stay = False
-        while self.handOnGoing is True:
+        while self.handOngoing is True:
             if self.player.stay is False:
                 #Ask to Hit or Stay... Show hand, Check hand if > 21
                 self.playerChoice()
                 self.checkPlayer()
             time.sleep(1)
-            if self.dealer.stay is False and self.handOnGoing is True:
+            if self.dealer.stay is False and self.handOngoing is True:
                 self.dealerChoice()
                 self.checkDealer()
             if self.player.stay is True and self.dealer.stay is True:
-                self.handOnGoing = False
-        if self.handOnGoing is False:
+                self.handOngoing = False
+        if self.handOngoing is False:
             self.checkOutcome()
 
 
@@ -119,11 +140,14 @@ class Game:
 
 
     def playerChoice(self):
+        #ASK INPUT FROM USER. Hit or Stay
         hitStay = input(f'Total: {self.player.handTotal()}... (H)it or (S)tay?')
         if hitStay.lower() == 'h':
+            #HIT. Draw from Deck -> Display drawn card
             self.player.draw(self.deck)
             self.player.hand[-1].show()
         elif hitStay.lower() == 's':
+            #STAY
             self.player.stay = True
         #Check for input error
         else:
@@ -133,7 +157,7 @@ class Game:
     def checkPlayer(self):
         if self.player.handTotal() > 21:
             print('BUST!')
-            self.handOnGoing = False
+            self.handOngoing = False
         else:
             self.showPlayerHand()
             pass
@@ -151,7 +175,7 @@ class Game:
     def checkDealer(self):
         if self.dealer.handTotal() > 21:
             print('BUST!')
-            self.handOnGoing = False
+            self.handOngoing = False
         else:
             self.showDealerHand()
             
