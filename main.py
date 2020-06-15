@@ -64,39 +64,39 @@ class Player:
 class Game:
     def __init__(self, player):
         self.deck = Deck()
-        self.player = player
+        self.player = Player(player)
         self.dealer = Player('Dealer')
         self.startGame()
     
     def startGame(self):
         
-        #Game Ongoing
+        #GAME ONGOING
         self.gameOngoing = True
 
         while self.gameOngoing is True:
             print('Starting game...\nDeck is being shuffled')
             self.deck.shuffle()
-            #Deal Cards
+            #DEAL CARDS
             print('Dealing Cards\n')
             self.player.draw(self.deck)
             self.dealer.draw(self.deck)
             self.player.draw(self.deck)
             self.dealer.draw(self.deck)
-            #Show Each Hand
+            #SHOW EACH HAND
             self.showDealerHand()
             self.showPlayerHand()
-
+            #START HAND
             self.playHand()
 
             userIn = input("Would you like to play again? (Y)es or (N)o\n")
 
-            ## TODO ##
-            #### WORK ON RESETING CARDS IN HAND
-            if userIn.lower() == 'Y':
+            #PLAY AGAIN...RESET CARDS IN HAND
+            if userIn.lower() == 'y':
+                self.player.hand = []
+                self.dealer.hand = []
                 self.gameOngoing = True
-                self.player.deck.hand.clear()
-                self.dealer.hand.deck.clear()
-            elif userIn.lower() == 'N':
+            #DONT PLAY AGAIN
+            elif userIn.lower() == 'n':
                 self.gameOngoing = False
 
     def playHand(self):
@@ -104,26 +104,30 @@ class Game:
         self.player.stay = False
         self.dealer.stay = False
         while self.handOngoing is True:
+            #PLAYER DOESNT STAY
             if self.player.stay is False:
                 #Ask to Hit or Stay... Show hand, Check hand if > 21
                 self.playerChoice()
                 self.checkPlayer()
             time.sleep(1)
+            #DEALER DOESNT STAY
             if self.dealer.stay is False and self.handOngoing is True:
                 self.dealerChoice()
                 self.checkDealer()
+            #BOTH PLAYERS STAY
             if self.player.stay is True and self.dealer.stay is True:
                 self.handOngoing = False
+        #CHECK OUTCOME WHEN HAND IS OVER
         if self.handOngoing is False:
             self.checkOutcome()
 
 
     def checkOutcome(self):
         print(f'\n\nComparing Hand Totals...\nDealer hand total:{self.dealer.handTotal()}\nPlayer hand total:{self.player.handTotal()}')
-            #IF PLAYER WINS
+            #IF (PLAYER > DEALER) & < 21
         if self.player.handTotal() <= 21 and self.player.handTotal() > self.dealer.handTotal():
             print(f'{self.player.name} Wins!')
-            #IF DEALER WINS
+            #IF (DEALER > PLAYER) & < 21
         elif self.dealer.handTotal() <=21 and self.dealer.handTotal() > self.player.handTotal():
             print('Dealer Wins. :(')
             #IF A PLAYER BUST
@@ -138,7 +142,7 @@ class Game:
         else:
             print("checkOutcome() 'else' statement")
 
-
+    #PLAYER HIT OR STAY
     def playerChoice(self):
         #ASK INPUT FROM USER. Hit or Stay
         hitStay = input(f'Total: {self.player.handTotal()}... (H)it or (S)tay?')
@@ -154,6 +158,7 @@ class Game:
             print('Incorrect Input, Please type "H" or "S" ')
             self.playerChoice()
     
+    #CHECK IF PLAYER BUSTS
     def checkPlayer(self):
         if self.player.handTotal() > 21:
             print('BUST!')
@@ -162,7 +167,7 @@ class Game:
             self.showPlayerHand()
             pass
 
-
+    #DEALER HIT OR STAY
     def dealerChoice(self):
         if self.dealer.handTotal() < 17:
             print('Dealer Draws')
@@ -171,7 +176,7 @@ class Game:
             print(f'Dealer stays...')
             self.dealer.stay = True
         
-
+    #CHECK IF DEALER BUSTS
     def checkDealer(self):
         if self.dealer.handTotal() > 21:
             print('BUST!')
@@ -195,9 +200,11 @@ class Game:
 
 
 
-chris = Player('Chris')
+# chris = Player('Chris')
 
-game = Game(chris)
+userIn = input('Enter your name!')
+
+game = Game(userIn)
 
 
 
